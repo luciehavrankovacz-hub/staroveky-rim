@@ -77,13 +77,18 @@
 <script>
 const CHAPTERS = [[0, 'Úvod – tři období římských dějin'], [64, 'I. Počátky Říma a doba královská'], [194, 'II. Římská republika'], [294, 'III. Řím ovládá Itálii'], [390, 'IV. Punské války'], [510, 'V. Krize republiky'], [578, 'VI. Gaius Julius Caesar'], [684, 'VII. Císařství a římský mír'], [848, 'VIII. Jak se žilo v Římě'], [945, 'IX. Křesťanství a krize říše'], [1064, 'X. Pád západořímské říše'], [1178, 'XI. Odkaz Říma a opakování']];
 const v = document.getElementById('v');
+// zvuk vždy zapnutý (nikdy neztlumený)
+const zvukZap = () => { v.muted = false; v.defaultMuted = false; v.removeAttribute('muted'); if (v.volume < 0.05) v.volume = 1; };
+zvukZap();
+v.addEventListener('loadedmetadata', zvukZap);
+v.addEventListener('play', zvukZap);
 const fmt = s => Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0');
 const box = document.getElementById('chapters');
 CHAPTERS.forEach(([t, name]) => {
   const b = document.createElement('button'); b.className = 'chap'; b.dataset.t = t;
   b.innerHTML = '<b>' + fmt(t) + '</b><span>' + name + '</span>';
   b.onclick = () => {
-    const go = () => { v.currentTime = t; v.play().catch(() => {}); };
+    const go = () => { zvukZap(); v.currentTime = t; v.play().catch(() => {}); };
     if (v.readyState >= 1) go(); else { v.addEventListener('loadedmetadata', go, { once: true }); v.load(); }
     v.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
